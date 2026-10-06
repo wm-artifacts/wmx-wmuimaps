@@ -1,0 +1,344 @@
+{
+  "name": "WMUIMaps",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wavemaker/wm-react-native-widgets"
+  },
+  "homepage": "https://wavemaker.github.io/wm-react-native-widgets",
+  "displayName": "Maps",
+  "description": "Map surface rendering Google Maps on Android, on iOS when the app has an iOS Google Maps key (Apple Maps otherwise), and on web through the Google Maps JavaScript API once Web API Key is set. Drops pins from a dataset, draws a route between points, and shows the device location.",
+  "iconUrl": "icon.svg",
+  "dependencies": {
+    "@wavemaker/react-native-widgets": "1.0.0",
+    "react-native-maps": "1.27.2",
+    "expo-location": "~57.0.19",
+    "@vis.gl/react-google-maps": "1.10.1"
+  },
+  "keywords": [
+    "map",
+    "maps",
+    "google-maps",
+    "apple-maps",
+    "marker",
+    "pin",
+    "route",
+    "polyline",
+    "geolocation",
+    "geofence",
+    "ui-widgets/maps"
+  ],
+  "props": {
+    "provider": {
+      "name": "provider",
+      "displayName": "Map Provider",
+      "description": "Map SDK on iOS. google renders Google Maps when the app has an iOS Google Maps API key (iosGoogleMapsApiKey in RN preferences) and falls back to Apple Maps without one; default always renders Apple Maps. Android always renders Google Maps. Default: google",
+      "type": "string",
+      "widget": "list",
+      "options": [
+        "default",
+        "google"
+      ],
+      "defaultValue": "google",
+      "isList": false,
+      "isRequired": false
+    },
+    "webApiKey": {
+      "name": "webApiKey",
+      "displayName": "Web API Key",
+      "description": "Google Maps JavaScript API key for web. It ships in the page, so restrict it to your domains (HTTP referrers). Ignored on iOS and Android, which read their keys from the app config. Without it, web renders an empty box.",
+      "type": "string",
+      "isList": false,
+      "isRequired": false
+    },
+    "mapType": {
+      "name": "mapType",
+      "displayName": "Map Type",
+      "description": "Map style. Apple Maps has no terrain style and falls back to standard. Default: standard",
+      "type": "string",
+      "widget": "list",
+      "options": [
+        "standard",
+        "satellite",
+        "hybrid",
+        "terrain"
+      ],
+      "defaultValue": "standard",
+      "isList": false,
+      "isRequired": false
+    },
+    "customMapStyle": {
+      "name": "customMapStyle",
+      "displayName": "Custom Map Style",
+      "description": "Google Maps style array as a JSON string, used to restyle roads, labels and terrain. Google Maps only: Android, web, or iOS with the google provider.",
+      "type": "string",
+      "defaultValue": "",
+      "isList": false,
+      "isRequired": false
+    },
+    "latitude": {
+      "name": "latitude",
+      "displayName": "Center Latitude",
+      "description": "Latitude the map is centered on. Rebinding it recenters the map. Default: 12.9716",
+      "type": "number",
+      "defaultValue": 12.9716,
+      "isList": false,
+      "isRequired": true
+    },
+    "longitude": {
+      "name": "longitude",
+      "displayName": "Center Longitude",
+      "description": "Longitude the map is centered on. Rebinding it recenters the map. Default: 77.5946",
+      "type": "number",
+      "defaultValue": 77.5946,
+      "isList": false,
+      "isRequired": true
+    },
+    "zoom": {
+      "name": "zoom",
+      "displayName": "Zoom",
+      "description": "Zoom level of the camera. 0 is the whole world, 12 a city, 16 a street and 20 a building. Default: 12",
+      "type": "number",
+      "defaultValue": 12,
+      "isList": false,
+      "isRequired": false
+    },
+    "markers": {
+      "name": "markers",
+      "displayName": "Markers",
+      "description": "Rows to drop as pins. A row may also carry color to tint its own pin, imageUrl to replace it with an image, and radius for its own coverage circle. Example: [{latitude: 12.9716, longitude: 77.5946, title: 'Bengaluru'}]",
+      "type": "object",
+      "isList": true,
+      "isRequired": true
+    },
+    "latitudeField": {
+      "name": "latitudeField",
+      "displayName": "Latitude Field",
+      "description": "Row field holding the latitude, in both markers and route path. Default: latitude",
+      "type": "string",
+      "defaultValue": "latitude",
+      "isList": false,
+      "isRequired": false
+    },
+    "longitudeField": {
+      "name": "longitudeField",
+      "displayName": "Longitude Field",
+      "description": "Row field holding the longitude, in both markers and route path. Default: longitude",
+      "type": "string",
+      "defaultValue": "longitude",
+      "isList": false,
+      "isRequired": false
+    },
+    "titleField": {
+      "name": "titleField",
+      "displayName": "Title Field",
+      "description": "Marker row field shown as the callout title. Default: title",
+      "type": "string",
+      "defaultValue": "title",
+      "isList": false,
+      "isRequired": false
+    },
+    "descriptionField": {
+      "name": "descriptionField",
+      "displayName": "Description Field",
+      "description": "Marker row field shown as the callout subtitle. Default: description",
+      "type": "string",
+      "defaultValue": "description",
+      "isList": false,
+      "isRequired": false
+    },
+    "markerColor": {
+      "name": "markerColor",
+      "displayName": "Marker Color",
+      "description": "Pin color used when a row carries no color of its own. Google Maps keeps only the hue of the color. Default: #EF4444",
+      "type": "string",
+      "widget": "color",
+      "defaultValue": "#EF4444",
+      "isList": false,
+      "isRequired": false
+    },
+    "markerIcon": {
+      "name": "markerIcon",
+      "displayName": "Marker Icon",
+      "description": "Image URL drawn in place of the default pin for every marker. A row may override it with its own imageUrl.",
+      "type": "string",
+      "defaultValue": "",
+      "isList": false,
+      "isRequired": false
+    },
+    "markerRadius": {
+      "name": "markerRadius",
+      "displayName": "Marker Radius",
+      "description": "Meters of coverage drawn as a tinted circle around every pin, for geofences and service areas. A row may carry its own radius. 0 draws none. Default: 0",
+      "type": "number",
+      "defaultValue": 0,
+      "isList": false,
+      "isRequired": false
+    },
+    "draggable": {
+      "name": "draggable",
+      "displayName": "Draggable",
+      "description": "Lets users long-press and drag pins. A row may carry its own draggable. Pair it with On Marker Drag End to save the new position. Default: false",
+      "type": "boolean",
+      "defaultValue": false,
+      "isList": false,
+      "isRequired": false
+    },
+    "routePath": {
+      "name": "routePath",
+      "displayName": "Route Path",
+      "description": "Ordered points drawn as a line across the map, read with the same latitude and longitude fields.",
+      "type": "object",
+      "isList": true,
+      "isRequired": false
+    },
+    "routeColor": {
+      "name": "routeColor",
+      "displayName": "Route Color",
+      "description": "Stroke color of the route line. Default: #2563EB",
+      "type": "string",
+      "widget": "color",
+      "defaultValue": "#2563EB",
+      "isList": false,
+      "isRequired": false
+    },
+    "showsUserLocation": {
+      "name": "showsUserLocation",
+      "displayName": "Show User Location",
+      "description": "Draw the blue dot for the device location. Asks for location permission on first render, and stays off if it is denied. The recenter button shows on native Google Maps only. Default: false",
+      "type": "boolean",
+      "defaultValue": false,
+      "isList": false,
+      "isRequired": false
+    },
+    "fitToData": {
+      "name": "fitToData",
+      "displayName": "Fit To Data",
+      "description": "Zoom to enclose every marker and route point instead of using the center and zoom. Default: false",
+      "type": "boolean",
+      "defaultValue": false,
+      "isList": false,
+      "isRequired": false
+    },
+    "height": {
+      "name": "height",
+      "displayName": "Height",
+      "description": "Height of the map surface, as dp (320), a percentage of the parent (50%), or fill to take all the space the page gives it. Leave blank to fill, unless a height is set in the style panel.",
+      "type": "string",
+      "defaultValue": "",
+      "isList": false,
+      "isRequired": false
+    },
+    "interactive": {
+      "name": "interactive",
+      "displayName": "Interactive",
+      "description": "Allow pan, zoom, rotate and tilt gestures. Turn it off for a map inside a scrolling page, so it cannot swallow the scroll. Default: true",
+      "type": "boolean",
+      "defaultValue": true,
+      "isList": false,
+      "isRequired": false
+    }
+  },
+  "events": {
+    "onMapReady": {
+      "name": "onMapReady",
+      "displayName": "On Map Ready",
+      "description": "Fires once the map surface is laid out and ready.",
+      "type": "function",
+      "params": [],
+      "isList": false,
+      "isRequired": false
+    },
+    "onRegionChange": {
+      "name": "onRegionChange",
+      "displayName": "On Region Change",
+      "description": "Fires with the new region once the camera settles, carrying latitude, longitude, latitudeDelta, longitudeDelta, zoom, tilt, bearing and isGesture.",
+      "type": "function",
+      "params": [
+        "event"
+      ],
+      "isList": false,
+      "isRequired": false
+    },
+    "onMapPress": {
+      "name": "onMapPress",
+      "displayName": "On Map Press",
+      "description": "Fires with the coordinate that was tapped.",
+      "type": "function",
+      "params": [
+        "coordinate"
+      ],
+      "isList": false,
+      "isRequired": false
+    },
+    "onLongPress": {
+      "name": "onLongPress",
+      "displayName": "On Long Press",
+      "description": "Fires with the coordinate that was long pressed. On web, a right click counts too.",
+      "type": "function",
+      "params": [
+        "coordinate"
+      ],
+      "isList": false,
+      "isRequired": false
+    },
+    "onMarkerPress": {
+      "name": "onMarkerPress",
+      "displayName": "On Marker Press",
+      "description": "Fires with the row behind the tapped pin.",
+      "type": "function",
+      "params": [
+        "row"
+      ],
+      "isList": false,
+      "isRequired": false
+    },
+    "onCalloutPress": {
+      "name": "onCalloutPress",
+      "displayName": "On Callout Press",
+      "description": "Fires with the row whose callout bubble was tapped.",
+      "type": "function",
+      "params": [
+        "row"
+      ],
+      "isList": false,
+      "isRequired": false
+    },
+    "onUserLocationChange": {
+      "name": "onUserLocationChange",
+      "displayName": "On User Location Change",
+      "description": "Fires with the device position (latitude, longitude, altitude, accuracy, heading, speed, timestamp) as it updates while Show User Location is on.",
+      "type": "function",
+      "params": [
+        "location"
+      ],
+      "isList": false,
+      "isRequired": false
+    },
+    "onMarkerDragEnd": {
+      "name": "onMarkerDragEnd",
+      "displayName": "On Marker Drag End",
+      "description": "Fires when a dragged pin is dropped, with the row behind it and its new coordinate.",
+      "type": "function",
+      "params": [
+        "event"
+      ],
+      "isList": false,
+      "isRequired": false
+    }
+  },
+  "group": "ui-widgets/maps",
+  "marketplace": {
+    "carouselImages": [
+      "/assets/images/markers.png",
+      "/assets/images/custommarker.png",
+      "/assets/images/area.png",
+      "/assets/images/routes.png"
+    ],
+    "thumbnailImage": "/assets/images/thumbnail.png",
+    "icon": "icon.svg",
+    "previewUrl": "https://wavemaker.github.io/wm-react-native-widgets/?path=/story/ui-widgets-maps--default"
+  },
+  "webSupport": true
+}
